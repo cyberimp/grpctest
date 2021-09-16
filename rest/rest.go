@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -18,8 +19,9 @@ type LogRecord struct {
 
 type LogServer struct {
 	accessLog []LogRecord
-	sink chan string
-	srv *http.Server
+	logMutex  sync.Mutex
+	sink      chan string
+	srv       *http.Server
 }
 
 func restPortSetup() uint16 {
@@ -33,7 +35,7 @@ func restPortSetup() uint16 {
 
 //Serve rest server
 func (s *LogServer) Serve(pipe chan string) {
-	port:=restPortSetup()
+	port := restPortSetup()
 
 	s.sink = pipe
 	s.accessLog = make([]LogRecord, 0)
@@ -61,17 +63,19 @@ func (s *LogServer) Serve(pipe chan string) {
 func (s *LogServer) accessLogHandle() {
 
 	for logString := range s.sink {
+		s.logMutex.Lock()
 		s.accessLog = append(s.accessLog,
 			LogRecord{
 				TimeStamp:  time.Now(),
 				AccessData: logString})
+		s.logMutex.Unlock()
 	}
 
 	s.shutdown(time.Second * 5)
 }
 
 func (s *LogServer) shutdown(timeout time.Duration) {
-	if s.srv == nil{
+	if s.srv == nil {
 		return
 	}
 
@@ -90,8 +94,9 @@ func (s *LogServer) shutdown(timeout time.Duration) {
 
 func (s *LogServer) indexHandler(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
+	s.logMutex.Lock()
 	body, err := json.Marshal(s.accessLog)
+	s.logMutex.Unlock()
 	if err != nil {
 		return
 	}

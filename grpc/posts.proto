@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option go_package="grpctest/grpc;grpc";
+
+service Posts {
+  rpc CreatePost (Post) returns (Id) {}
+  rpc ReadPost (Id) returns (Post) {}
+  rpc UpdatePost (FullPostInfo) returns (Ok) {}
+  rpc DeletePost (Id) returns (Ok) {}
+  rpc ListPosts (Pagination) returns (stream Post) {}
+}
+
+message Post {
+  string title = 1;
+  string text = 2;
+}
+
+message Pagination {
+  uint32 page = 1;
+  uint32 size = 2;
+}
+
+message Id {
+  uint32 id = 1;
+}
+
+message FullPostInfo {
+  Id id = 1;
+  Post newPost = 2;
+}
+
+message Ok {
+  bool ok = 1;
+  string message = 2;
+}

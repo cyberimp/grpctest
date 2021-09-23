@@ -3,10 +3,10 @@ package grpcserver
 import (
 	"context"
 	"fmt"
+	db "github.com/cyberimp/grpctest/gorm"
+	pb "github.com/cyberimp/grpctest/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/peer"
-	db "grpctest/gorm"
-	pb "grpctest/grpc"
 	"log"
 	"net"
 )

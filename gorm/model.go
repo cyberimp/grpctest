@@ -1,8 +1,8 @@
 package gorm
 
 import (
+	pb "github.com/cyberimp/grpctest/grpc"
 	"gorm.io/gorm"
-	pb "grpctest/grpc"
 )
 
 type Post struct {

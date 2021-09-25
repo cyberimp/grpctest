@@ -1,6 +1,8 @@
 package gorm
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Conn struct {
 	db *gorm.DB
@@ -41,4 +43,8 @@ func (s *Conn) List(page int, size int) ([]Post, error) {
 	posts := make([]Post, 0)
 	result := s.db.Limit(size).Offset(page * size).Find(&posts)
 	return posts, result.Error
+}
+
+func (s *Conn) migrate() error {
+	return s.db.AutoMigrate(&Post{})
 }

@@ -35,7 +35,9 @@ func (s *Conn) Update(newPost *Post) (uint, error) {
 }
 
 func (s *Conn) Delete(id uint) error {
-	result := s.db.Delete(&Post{}, id)
+	post := new(Post)
+	post.ID = id
+	result := s.db.Delete(post)
 	return result.Error
 }
 

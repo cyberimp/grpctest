@@ -14,3 +14,7 @@ func (s *Conn) ConnectDB() error {
 	}
 	return s.migrate()
 }
+
+func (s *Conn) migrate() error {
+	return s.db.AutoMigrate(&Post{})
+}

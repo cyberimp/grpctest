@@ -1,3 +1,4 @@
+// Package gorm manages connection and crud operations with gorm
 package gorm
 
 import (
@@ -9,9 +10,8 @@ type Conn struct {
 }
 
 func (s *Conn) Create(newPost *Post) (uint, error) {
-	post := newPost
-	result := s.db.Create(post)
-	return post.ID, result.Error
+	result := s.db.Create(newPost)
+	return newPost.ID, result.Error
 }
 
 func (s *Conn) Read(id uint) (*Post, error) {
@@ -45,8 +45,4 @@ func (s *Conn) List(page int, size int) ([]Post, error) {
 	posts := make([]Post, 0)
 	result := s.db.Limit(size).Offset(page * size).Find(&posts)
 	return posts, result.Error
-}
-
-func (s *Conn) migrate() error {
-	return s.db.AutoMigrate(&Post{})
 }
